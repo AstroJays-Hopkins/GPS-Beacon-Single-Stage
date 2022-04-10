@@ -1,8 +1,6 @@
 
-#include <Arduino.h>
 #include <Adafruit_GPS.h>
 #include <LoRa.h>
-#include <stdlib.h>
 
 //Union type punning 
 union Data {
