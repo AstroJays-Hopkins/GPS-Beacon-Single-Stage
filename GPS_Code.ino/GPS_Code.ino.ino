@@ -1,12 +1,22 @@
 
+
 #include <Adafruit_GPS.h>
 #include <LoRa.h>
+
 
 //Union type punning 
 union Data {
   int32_t i;
   uint8_t str[4];
 } data;
+
+typedef struct{
+    char header = 0x55;
+    int32_t lat;
+    char lat_dir;
+    int32_t lon;
+    char lon_dir;
+} Packet; 
 
 //lora frequency and pins
 int frequnecy = 915E6;
@@ -40,26 +50,16 @@ void setup() {
 
 //format
 //Divide int32_t by 10000000.0 to get decimal (fixed points)
-//1 byte header of 0x55
+//1 byte marker 
 //4 bytes of int32_t lat
 //1 byte of direction N/S
 //4 bytes of int32_t lon
 //1 bytes of direction E/W
 
-void send_to_lora(int32_t lat, char lat_dir, int32_t lon, char lon_dir) {
-  //type puning 
-  union Data lat_un;
-  lat_un.i = lat;
-  union Data lon_un;
-  lon_un.i = lon;
-
+void send_to_lora(uint8_t * packet) {
   //writing with packet
   LoRa.beginPacket();
-  LoRa.write(0x55);
-  LoRa.write(lon_un.str, 4);
-  LoRa.write(lat_dir);
-  LoRa.write(lat_un.str, 4);
-  LoRa.write(lon_dir);
+  LoRa.write(packet, 11);
   LoRa.endPacket();
 }
 
@@ -79,6 +79,12 @@ void loop() {
   if (millis() - timer > 1000) {
     latpoint_fixed = GPS.latitude_fixed;
     lonpoint_fixed = GPS.longitude_fixed;
-    send_to_lora(latpoint_fixed,GPS.lat,lonpoint_fixed, GPS.lon);
+    Packet packet;
+    packet.lat = latpoint_fixed;
+    packet.lat_dir = GPS.lat;
+    packet.lon = lonpoint_fixed;
+    packet.lon_dir = GPS.lon; 
+    uint8_t * packet_addr = (uint8_t *)(packet_addr);
+    send_to_lora(packet_addr);
   }
 }
