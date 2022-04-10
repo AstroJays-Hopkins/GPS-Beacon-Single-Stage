@@ -42,6 +42,7 @@ void setup() {
 
 //format
 //Divide int32_t by 10000000.0 to get decimal (fixed points)
+//1 byte header of 0x55
 //4 bytes of int32_t lat
 //1 byte of direction N/S
 //4 bytes of int32_t lon
@@ -56,6 +57,7 @@ void send_to_lora(int32_t lat, char lat_dir, int32_t lon, char lon_dir) {
 
   //writing with packet
   LoRa.beginPacket();
+  LoRa.write(0x55);
   LoRa.write(lon_un.str, 4);
   LoRa.write(lat_dir);
   LoRa.write(lat_un.str, 4);
