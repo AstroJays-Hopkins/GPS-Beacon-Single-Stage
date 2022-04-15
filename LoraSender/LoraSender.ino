@@ -20,7 +20,6 @@ Adafruit_GPS GPS(&GPSSerial);
 void setup() {
   //Lora Setup
   if (!LoRa.begin(915E6)) {
-    Serial.println("Starting LoRa failed!");
     while (1);
   }
   //GPS startup
