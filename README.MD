@@ -2,7 +2,7 @@
 
 ## Purpose
 This code is for the solid rocket recovery and ground system\
-Sender: It reads data from a GPS Ultimate V3 and sends it via Lora to the ground station. This code will be run on the rocket.
+Sender: It reads data from a GPS Ultimate V3 and from a Baro MS5607B and sends it via Lora to the ground station. This code will be run on the rocket.
 
 Reciever: It receives and parses the packet from the sender. This code will be run on the ground station.
 
