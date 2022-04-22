@@ -2,7 +2,7 @@
 
 
 //buffer for packet
-char buffer[11];
+char buffer[15];
 
 
 //struct for packet 
@@ -12,6 +12,7 @@ typedef struct{
     char lat_dir;
     int32_t lon;
     char lon_dir;
+    float altitude; 
 } Packet __attribute__((packed)); 
 
 
@@ -44,7 +45,7 @@ void loop() {
       buffer[0] = first;
       int i=1;
       //read into buffer
-      while(i<11) {
+      while(i<15) {
         buffer[i]=(char)LoRa.read();
         ++i;
       }
@@ -59,6 +60,8 @@ void loop() {
       Serial.println(packet_ptr->lon);
       Serial.print("lon_dir: ");
       Serial.println(packet_ptr->lon_dir);
+      Serial.print("altitude: ");
+      Serial.println(packet_ptr->altitude);
     }
 
   }
