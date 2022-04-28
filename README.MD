@@ -13,7 +13,7 @@ The packet sent from the rocket is structured as: \
 1 byte of direction N/S \
 4 bytes of int32_t fixed point lon \
 1 bytes of direction E/W \
-4 bytes of float for latitude \
+4 bytes of float for altitude \
 Divide the fixed point number by 10000000.0 to get decimal degrees equivalent
 
 ## Use
