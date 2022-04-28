@@ -107,6 +107,7 @@ void setup() {
 //1 byte of direction N/S
 //4 bytes of int32_t lon
 //1 bytes of direction E/W
+//4 bytes for altitude
 
 void send_to_lora(uint8_t * packet) {
   //writing with packet
@@ -122,9 +123,10 @@ int32_t lonpoint_fixed = 0;
 
 void loop() {
 
-
+  //update the altitude using linear converter
   altitude = baro.getHeightCentiMeters()/30.48 - alt0;
   avg_alt += (altitude - avg_alt)/5;
+  
   //check for parsing
   char c = GPS.read();
   if (GPS.newNMEAreceived()) {
