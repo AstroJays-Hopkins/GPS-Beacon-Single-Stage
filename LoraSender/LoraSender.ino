@@ -12,7 +12,7 @@ typedef struct {
   char lon_dir;
   float altitude; 
   char dummy;
-} Packet __attribute__((packed));
+}__attribute__((packed)) Packet;
 
 
 //defining GPS serial
@@ -80,8 +80,7 @@ void setup() {
 //4 bytes of int32_t lon
 //1 bytes of direction E/W
 //4 bytes of altitude
-//1 bytes of dummy data
-//total 16 bytes
+//total 15 bytes
 
 void send_to_lora(uint8_t * packet) {
   //writing with packet
@@ -93,13 +92,15 @@ void send_to_lora(uint8_t * packet) {
 //global variables for lat and lon
 int32_t latpoint_fixed = 0;
 int32_t lonpoint_fixed = 0;
+char lat_dir = 'A';
+char lon_dir = 'A';
+
 
 void loop() {
 
-  //update the altitude using linear converter
+
   altitude = baro.getHeightCentiMeters()/30.48 - alt0;
   avg_alt += (altitude - avg_alt)/5;
-  
   //check for parsing
   char c = GPS.read();
   if (GPS.newNMEAreceived()) {
@@ -108,15 +109,17 @@ void loop() {
   }
   //read the parse data every second
   //send to lora
-  latpoint_fixed = GPS.latitude_fixed;
-  lonpoint_fixed = GPS.longitude_fixed;
-
+  //latpoint_fixed = GPS.latitude_fixed;
+  //lonpoint_fixed = GPS.longitude_fixed;
+  //lat_dir = GPS.lat;
+  //lon_dir = GPS.lon;
+  
   //packet the struct
   Packet packet;
   packet.lat = latpoint_fixed;
-  packet.lat_dir = GPS.lat;
+  packet.lat_dir = lat_dir;
   packet.lon = lonpoint_fixed;
-  packet.lon_dir = GPS.lon;
+  packet.lon_dir = lat_dir;
   packet.altitude = avg_alt;
   //convert to uint8_t packet
   uint8_t * packet_addr = (uint8_t *)(&packet);

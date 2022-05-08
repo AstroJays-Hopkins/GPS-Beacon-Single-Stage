@@ -14,7 +14,7 @@ typedef struct{
     char lon_dir;
     float altitude; 
     char dummy;
-} Packet __attribute__((packed)); 
+}__attribute__((packed)) Packet; 
 
 
 
