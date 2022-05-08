@@ -109,10 +109,10 @@ void loop() {
   }
   //read the parse data every second
   //send to lora
-  //latpoint_fixed = GPS.latitude_fixed;
-  //lonpoint_fixed = GPS.longitude_fixed;
-  //lat_dir = GPS.lat;
-  //lon_dir = GPS.lon;
+  latpoint_fixed = GPS.latitude_fixed;
+  lonpoint_fixed = GPS.longitude_fixed;
+  lat_dir = GPS.lat;
+  lon_dir = GPS.lon;
   
   //packet the struct
   Packet packet;
