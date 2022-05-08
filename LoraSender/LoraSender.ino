@@ -119,10 +119,8 @@ void loop() {
   packet.lat = latpoint_fixed;
   packet.lat_dir = lat_dir;
   packet.lon = lonpoint_fixed;
-  packet.lon_dir = lat_dir;
+  packet.lon_dir = lon_dir;
   packet.altitude = avg_alt;
-  //convert to uint8_t packet
-  uint8_t * packet_addr = (uint8_t *)(&packet);
   Serial.print("lat: ");
   Serial.println(packet.lat);
   Serial.print("lat_dir: ");
@@ -133,6 +131,9 @@ void loop() {
   Serial.println(packet.lon_dir);
   Serial.print("altitude: ");
   Serial.println(packet.altitude);
+  //convert to uint8_t packet
+  uint8_t * packet_addr = (uint8_t *)(&packet);
+
   //send to lora function
   send_to_lora(packet_addr);
 }
