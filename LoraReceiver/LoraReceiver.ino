@@ -34,8 +34,8 @@ void loop() {
   // try to parse packet
   int packetSize = LoRa.parsePacket();
 
-  //packet size is 11
-  if (packetSize==11) {
+  //packet size is 15
+  if (packetSize==15) {
     // received a packet
     Serial.println("Received packet ");
 
