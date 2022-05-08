@@ -2,7 +2,7 @@
 
 ## Purpose
 This code is for the solid rocket recovery and ground system\
-Sender: It reads data from a GPS Ultimate V3 and sends it via Lora to the ground station. This code will be run on the rocket.
+Sender: It reads data from a GPS Ultimate V3 and from a Baro MS5607B and sends it via Lora to the ground station. This code will be run on the rocket.
 
 Reciever: It receives and parses the packet from the sender. This code will be run on the ground station.
 
@@ -13,8 +13,10 @@ The packet sent from the rocket is structured as: \
 1 byte of direction N/S \
 4 bytes of int32_t fixed point lon \
 1 bytes of direction E/W \
-4 bytes of float for latitude \
-Divide the fixed point number by 10000000.0 to get decimal degrees equivalent
+4 bytes of float for altitude \
+1 bytes of dummy padding \
+Divide the fixed point number by 10000000.0 to get decimal degrees equivalent \
+altitude is in feet
 
 ## Use
 
