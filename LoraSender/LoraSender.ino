@@ -1,6 +1,6 @@
 
 #include <Adafruit_GPS.h>
-#include <RH_RF95.h>
+#include <LoRa.h>
 #include "IntersemaBaro.h"
 
 //struct for packet
@@ -11,6 +11,7 @@ typedef struct {
   int32_t lon;
   char lon_dir;
   float altitude; 
+  char dummy;
 } Packet __attribute__((packed));
 
 
@@ -21,13 +22,6 @@ int baud_rate = 9600;
 Adafruit_GPS GPS(&GPSSerial);
 
 
-//lora setup
-#define RFM95_RST     11   // "A"
-#define RFM95_CS      10   // "B"
-#define RFM95_INT     6    // "D"
-#define RF95_FREQ 915.0
-// Singleton instance of the radio driver
-RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 
 //altimiter set up
@@ -44,9 +38,15 @@ void setup() {
   //Lora Setup
   Serial.begin(9600);
   while (!Serial);
-
+  if (!LoRa.begin(915E6)) {
+    while (1);
+  }
+  Serial.println("LoRa radio init OK!");
+  LoRa.setTxPower(20);
+  Serial.println("Cranking up power!");
   //initalize baro
   baro.init();
+  Serial.println("Initializing Baro!");
 
   //set starting altitude
   alt0 = 0;
@@ -59,44 +59,16 @@ void setup() {
       delay(10);
     }
   alt0 /= num_points;
-
-
-  pinMode(RFM95_RST, OUTPUT);
-  digitalWrite(RFM95_RST, HIGH);
-
-  // manual reset
-  digitalWrite(RFM95_RST, LOW);
-  delay(10);
-  digitalWrite(RFM95_RST, HIGH);
-  delay(10);
-
-
-  while (!rf95.init()) {
-    Serial.println("LoRa radio init failed");
-    Serial.println("Uncomment '#define SERIAL_DEBUG' in RH_RF95.cpp for detailed debug info");
-    while (1);
-  }
-  Serial.println("LoRa radio init OK!");
-
-  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
-  if (!rf95.setFrequency(RF95_FREQ)) {
-    Serial.println("setFrequency failed");
-    while (1);
-  }
-  Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
-
-  // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
-
-  // The default transmitter power is 13dBm, using PA_BOOST.
-  // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
-  // you can set transmitter powers from 5 to 23 dBm:
-  rf95.setTxPower(23, false);
-
+  
+  
   //GPS startup
   GPS.begin(baud_rate);
+  Serial.println("Initializing GPS!");
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
   GPS.sendCommand(PGCMD_ANTENNA);
+  Serial.println("Tuning GPS!");
+  Serial.println("Setup Complete!");
 }
 
 
@@ -107,13 +79,14 @@ void setup() {
 //1 byte of direction N/S
 //4 bytes of int32_t lon
 //1 bytes of direction E/W
+//4 bytes of altitude
+//total 15 bytes
 
 void send_to_lora(uint8_t * packet) {
   //writing with packet
-  if(rf95.available()){
-    rf95.send(packet, 15);
-    rf95.waitPacketSent();
-  }
+  LoRa.beginPacket();
+  LoRa.write(packet, 16);
+  LoRa.endPacket();
 }
 
 //global variables for lat and lon
@@ -143,12 +116,18 @@ void loop() {
   packet.lon = lonpoint_fixed;
   packet.lon_dir = GPS.lon;
   packet.altitude = avg_alt;
-  
-  Serial.println(packet.lat);
-  Serial.println(packet.lon);
   //convert to uint8_t packet
   uint8_t * packet_addr = (uint8_t *)(&packet);
-
+  Serial.print("lat: ");
+  Serial.println(packet.lat);
+  Serial.print("lat_dir: ");
+  Serial.println(packet.lat_dir);
+  Serial.print("lon: ");
+  Serial.println(packet.lon);
+  Serial.print("lon_dir: ");
+  Serial.println(packet.lon_dir);
+  Serial.print("altitude: ");
+  Serial.println(packet.altitude);
   //send to lora function
   send_to_lora(packet_addr);
 }

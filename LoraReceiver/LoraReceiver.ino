@@ -2,7 +2,7 @@
 
 
 //buffer for packet
-char buffer[15];
+char buffer[16];
 
 
 //struct for packet 
@@ -13,6 +13,7 @@ typedef struct{
     int32_t lon;
     char lon_dir;
     float altitude; 
+    char dummy;
 } Packet __attribute__((packed)); 
 
 
@@ -34,8 +35,8 @@ void loop() {
   // try to parse packet
   int packetSize = LoRa.parsePacket();
 
-  //packet size is 11
-  if (packetSize==11) {
+  //packet size is 16
+  if (packetSize==16) {
     // received a packet
     Serial.println("Received packet ");
 
@@ -45,7 +46,7 @@ void loop() {
       buffer[0] = first;
       int i=1;
       //read into buffer
-      while(i<15) {
+      while(i<16) {
         buffer[i]=(char)LoRa.read();
         ++i;
       }
