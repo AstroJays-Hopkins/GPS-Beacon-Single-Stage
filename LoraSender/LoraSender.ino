@@ -6,9 +6,9 @@
 //struct for packet
 typedef struct {
   char header = 0x55;
-  int32_t lat;
+  float lat;
   char padding1;
-  int32_t lon;
+  float lon;
   char padding2;
   float altitude;
   char padding3;
@@ -20,7 +20,6 @@ typedef struct {
 #define Serial SERIAL_PORT_USBVIRTUAL
 
 TinyGPS gps;
-
 
 //altimiter set up
 Intersema::BaroPressure_MS5607B baro(true);
