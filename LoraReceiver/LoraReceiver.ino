@@ -8,9 +8,9 @@ char buffer[16];
 //struct for packet 
 typedef struct {
   char header = 0x55;
-  int32_t lat;
+  float lat;
   char padding1;
-  int32_t lon;
+  float lon;
   char padding2;
   float altitude;
   char padding3;
