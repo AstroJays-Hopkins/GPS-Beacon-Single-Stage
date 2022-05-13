@@ -35,8 +35,8 @@ static void smartdelay(unsigned long ms)
   unsigned long start = millis();
   do 
   {
-    while (ss.available())
-      gps.encode(ss.read());
+    while (GPSSerial.available())
+      gps.encode(GPSSerial.read());
   } while (millis() - start < ms);
 }
 
@@ -94,6 +94,7 @@ void send_to_lora(uint8_t * packet) {
 //global variables for lat and lon
 float flat = 0;
 float flon = 0;
+unsigned long age = 0;
 
 void loop() {
   smartdelay(10);
