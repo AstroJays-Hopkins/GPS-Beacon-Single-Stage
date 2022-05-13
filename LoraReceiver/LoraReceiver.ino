@@ -6,15 +6,15 @@ char buffer[16];
 
 
 //struct for packet 
-typedef struct{
-    char header = 0x55;
-    int32_t lat;
-    char lat_dir;
-    int32_t lon;
-    char lon_dir;
-    float altitude; 
-    char dummy;
-}__attribute__((packed)) Packet; 
+typedef struct {
+  char header = 0x55;
+  int32_t lat;
+  char padding1;
+  int32_t lon;
+  char padding2;
+  float altitude;
+  char padding3;
+} __attribute__((packed)) Packet;
 
 
 
@@ -55,12 +55,8 @@ void loop() {
       //output lat lon 
       Serial.print("lat: ");
       Serial.println(packet_ptr->lat);
-      Serial.print("lat_dir: ");
-      Serial.println(packet_ptr->lat_dir);
       Serial.print("lon: ");
       Serial.println(packet_ptr->lon);
-      Serial.print("lon_dir: ");
-      Serial.println(packet_ptr->lon_dir);
       Serial.print("altitude: ");
       Serial.println(packet_ptr->altitude);
     }
