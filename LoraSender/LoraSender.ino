@@ -30,7 +30,7 @@ float alt0;
 float altitude;
 
 // TV camera power management
-#define TV_CAM_PIN D5     // pin to turn on live TV camera --- raise high
+#define TV_CAM_PIN 5     // pin to turn on live TV camera --- raise high
                           // to turn on camera.
 #define TV_CAM_ON_ALTITUDE 5     // Altitude (in feet) at which camera turns on
 int TV_cam_is_on = 0;                // 0 when camera is off; 1 when cam is on
