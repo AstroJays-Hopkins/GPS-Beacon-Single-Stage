@@ -29,6 +29,13 @@ float avg_alt;
 float alt0;
 float altitude;
 
+// TV camera power management
+#define TV_CAM_PIN D5     // pin to turn on live TV camera --- raise high
+                          // to turn on camera.
+#define TV_CAM_ON_ALTITUDE 5     // Altitude (in feet) at which camera turns on
+int TV_cam_is_on = 0;                // 0 when camera is off; 1 when cam is on
+
+
 static void smartdelay(unsigned long ms)
 {
   unsigned long start = millis();
@@ -67,6 +74,11 @@ void setup() {
 
   //GPS startup
   GPSSerial.begin(9600);
+
+  // Enable TV camera power control pin as output and set to low to
+  // keep camera off.
+  pinMode(TV_CAM_PIN, OUTPUT);
+  digitalWrite(TV_CAM_PIN, LOW);
 }
 
 
@@ -107,6 +119,13 @@ void loop() {
   packet.lat = flat;
   packet.lon = flon;
   packet.altitude = avg_alt;
+
+  // Turn on the TV camera if it is off and we've exceeded the
+  // altitute it's supposed to turn on at
+  if (!TV_cam_is_on && ((avg_alt - alt0) > TV_CAM_ON_ALTITUDE)) {
+    digitalWrite(TV_CAM_PIN, HIGH);
+    TV_cam_is_on = 1;
+  }
   
   Serial.print("lat: ");
   Serial.println(packet.lat);
